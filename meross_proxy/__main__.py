@@ -11,20 +11,29 @@ EMAIL = os.environ.get('MEROSS_EMAIL')
 PASSWORD = os.environ.get('MEROSS_PASSWORD')
 
 
+def plug_to_dict(p):
+    return {
+        "uuid": p.uuid,
+        "name": p.name,
+        "online": p.online,
+        "fwversion": p.fwversion,
+        "status": p.get_status(),
+    }
+
+
 @route('/plugs')
 def list_plugs():
-    res = []
-    for p in plugs.values():
-        res.append({
-            "uuid": p.uuid,
-            "name": p.name,
-            "online": p.online,
-            "fwversion": p.fwversion,
-            "status": p.get_status(),
-        })
     return {
-        "plugs": res,
+        "plugs": list(map(plug_to_dict, plugs.values())),
     }
+
+
+@route('/plugs/<uuid:re:[0-9a-f]+>')
+def get_plug(uuid):
+    plug = plugs.get(uuid)
+    if plug is None:
+        abort(404)
+    return plug_to_dict(plug)
 
 
 @route('/plugs/<uuid:re:[0-9a-f]+>/turn_off', method='POST')
