@@ -8,8 +8,8 @@ from meross_iot.manager import MerossManager
 
 HOST = os.environ.get("PROXY_HOST", "localhost")
 PORT = int(os.environ.get("PROXY_PORT", "8080"))
-EMAIL = os.environ.get('MEROSS_EMAIL')
-PASSWORD = os.environ.get('MEROSS_PASSWORD')
+EMAIL = os.environ.get("MEROSS_EMAIL")
+PASSWORD = os.environ.get("MEROSS_PASSWORD")
 
 
 def plug_to_dict(p):
@@ -29,14 +29,14 @@ def healthcheck():
     }
 
 
-@route('/plugs')
+@route("/plugs")
 def list_plugs():
     return {
         "plugs": list(map(plug_to_dict, plugs.values())),
     }
 
 
-@route('/plugs/<uuid:re:[0-9a-f]+>')
+@route("/plugs/<uuid:re:[0-9a-f]+>")
 def get_plug(uuid):
     plug = plugs.get(uuid)
     if plug is None:
@@ -44,7 +44,7 @@ def get_plug(uuid):
     return plug_to_dict(plug)
 
 
-@route('/plugs/<uuid:re:[0-9a-f]+>/turn_off', method='POST')
+@route("/plugs/<uuid:re:[0-9a-f]+>/turn_off", method="POST")
 def turn_off_plug(uuid):
     plug = plugs.get(uuid)
     if plug is None:
@@ -52,7 +52,7 @@ def turn_off_plug(uuid):
     plug.turn_off()
 
 
-@route('/plugs/<uuid:re:[0-9a-f]+>/turn_on', method='POST')
+@route("/plugs/<uuid:re:[0-9a-f]+>/turn_on", method="POST")
 def turn_on_plug(uuid):
     plug = plugs.get(uuid)
     if plug is None:
@@ -61,8 +61,7 @@ def turn_on_plug(uuid):
 
 
 manager = MerossManager.from_email_and_password(
-        meross_email=EMAIL,
-        meross_password=PASSWORD,
+    meross_email=EMAIL, meross_password=PASSWORD,
 )
 manager.start()
 atexit.register(lambda: manager.stop())
