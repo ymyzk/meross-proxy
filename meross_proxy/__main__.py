@@ -52,7 +52,10 @@ def turn_on_plug(uuid):
     plug.turn_on()
 
 
-manager = MerossManager(meross_email=EMAIL, meross_password=PASSWORD)
+manager = MerossManager.from_email_and_password(
+        meross_email=EMAIL,
+        meross_password=PASSWORD,
+)
 manager.start()
 plugs = {d.uuid: d for d in manager.get_devices_by_kind(GenericPlug)}
 run(host=HOST, port=PORT)
