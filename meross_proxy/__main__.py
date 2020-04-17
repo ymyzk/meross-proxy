@@ -1,3 +1,4 @@
+import atexit
 import os
 
 from bottle import abort, route, run
@@ -57,5 +58,6 @@ manager = MerossManager.from_email_and_password(
         meross_password=PASSWORD,
 )
 manager.start()
+atexit.register(lambda: manager.stop())
 plugs = {d.uuid: d for d in manager.get_devices_by_kind(GenericPlug)}
 run(host=HOST, port=PORT)
