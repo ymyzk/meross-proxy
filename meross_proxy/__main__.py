@@ -22,6 +22,13 @@ def plug_to_dict(p):
     }
 
 
+@route("/healthz")
+def healthcheck():
+    return {
+        "status": "OK",
+    }
+
+
 @route('/plugs')
 def list_plugs():
     return {
