@@ -1,15 +1,18 @@
 import atexit
 import os
 
-from bottle import abort, route, run
+from bottle import abort, request, response, route, run
 from meross_iot.cloud.devices.power_plugs import GenericPlug
 from meross_iot.manager import MerossManager
+from prometheus_client import make_wsgi_app
 
 
 HOST = os.environ.get("PROXY_HOST", "localhost")
 PORT = int(os.environ.get("PROXY_PORT", "8080"))
 EMAIL = os.environ.get("MEROSS_EMAIL")
 PASSWORD = os.environ.get("MEROSS_PASSWORD")
+
+prometheus_app = make_wsgi_app()
 
 
 def plug_to_dict(p):
@@ -27,6 +30,15 @@ def healthcheck():
     return {
         "status": "OK",
     }
+
+
+@route("/metrics")
+def healthcheck():
+    def start_response(status, headers):
+        response.status = int(status.split(" ")[0])
+        for k, v in headers:
+            response.set_header(k, v)
+    return prometheus_app(request.environ, start_response)
 
 
 @route("/plugs")

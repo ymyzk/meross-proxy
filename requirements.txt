@@ -1,2 +1,3 @@
 bottle>=0.12,<0.13
 meross_iot>=0.3,<0.4
+prometheus_client>=0.7,<0.8
