@@ -22,10 +22,16 @@ class MerossProxyApp:
         app.route("/healthz", callback=self.healthcheck)
         app.route("/plugs", callback=self.list_plugs)
         app.route("/plugs/<uuid:re:[0-9a-f]+>", callback=self.get_plug)
-        app.route("/plugs/<uuid:re:[0-9a-f]+>/turn_off",
-                  method="POST", callback=self.turn_off_plug)
-        app.route("/plugs/<uuid:re:[0-9a-f]+>/turn_on",
-                  method="POST", callback=self.turn_on_plug)
+        app.route(
+            "/plugs/<uuid:re:[0-9a-f]+>/turn_off",
+            method="POST",
+            callback=self.turn_off_plug,
+        )
+        app.route(
+            "/plugs/<uuid:re:[0-9a-f]+>/turn_on",
+            method="POST",
+            callback=self.turn_on_plug,
+        )
         self.app = app
 
         # Initialize MerossManager
@@ -33,7 +39,9 @@ class MerossProxyApp:
         atexit.register(lambda: meross_manager.stop())
 
         # Discover devices
-        self._plugs = {d.uuid: d for d in meross_manager.get_devices_by_kind(GenericPlug)}
+        self._plugs = {
+            d.uuid: d for d in meross_manager.get_devices_by_kind(GenericPlug)
+        }
 
     def healthcheck(self):
         return {
@@ -66,6 +74,5 @@ class MerossProxyApp:
 
 def make_bottle_app(*, meross_manager, prometheus_app):
     return MerossProxyApp(
-        meross_manager=meross_manager,
-        prometheus_app=prometheus_app,
+        meross_manager=meross_manager, prometheus_app=prometheus_app,
     ).app

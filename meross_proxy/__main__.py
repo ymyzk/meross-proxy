@@ -15,7 +15,5 @@ PASSWORD = os.environ.get("MEROSS_PASSWORD")
 manager = MerossManager.from_email_and_password(
     meross_email=EMAIL, meross_password=PASSWORD,
 )
-make_bottle_app(
-    meross_manager=manager,
-    prometheus_app=make_wsgi_app(),
-).run(host=HOST, port=PORT)
+app = make_bottle_app(meross_manager=manager, prometheus_app=make_wsgi_app())
+app.run(host=HOST, port=PORT)
